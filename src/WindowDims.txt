@@ -1,0 +1,2 @@
+ScreenDim: 720 #number of pixels to a side
+GridDim: 45 #number of cells to a side

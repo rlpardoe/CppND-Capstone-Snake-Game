@@ -35,7 +35,7 @@ This project is based on the starter repo for the Capstone project in the [Udaci
 ## Ruberic Points
 
 ### Loop/IO
-1. Projects Reads Data from a file - See utils.h / utils.cpp, WindowDims.txt\
+1. Projects Reads Data from a file - See utils.h / utils.cpp (ParseWindowInfo Specifically) runtimeConfig.txt
 2. Project Accepts user input and processes the input - Spacebar pauses the game (controller.cpp lines ?-?)
 
 ### OOP

@@ -6,6 +6,7 @@
 #include "snake.h"
 #include <memory>
 #include "barriers.h"
+#include <mutex>
 
 class Renderer {
  public:
@@ -17,7 +18,7 @@ class Renderer {
             std::shared_ptr<BarrierManager> barrierManager);
   ~Renderer();
 
-  void Render(Snake const snake, SDL_Point const &food);
+  void Render(Snake const snake, SDL_Point const &food, bool &is_bonus_food_active, std::mutex& bonus_mtx);
   void UpdateWindowTitle(int score, int fps);
 
  private:

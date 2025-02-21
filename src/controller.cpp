@@ -9,11 +9,14 @@ void Controller::ChangeDirection(Snake &snake, Snake::Direction input,
   return;
 }
 
-void Controller::HandleInput(bool &running, bool &paused, Snake &snake) const {
+void Controller::HandleInput(bool &running, bool &paused, std::mutex& p_mtx, Snake &snake) const {
   SDL_Event e;
   while (SDL_PollEvent(&e)) {
     if (e.type == SDL_QUIT) {
-      running = false;  
+      running = false;
+      std::unique_lock<std::mutex> p_lock(p_mtx);
+      paused = false;
+      p_lock.unlock();  
     } else if (e.type == SDL_KEYDOWN) {
       switch (e.key.keysym.sym) {
         case SDLK_UP:
@@ -36,7 +39,9 @@ void Controller::HandleInput(bool &running, bool &paused, Snake &snake) const {
                           Snake::Direction::kLeft);
           break;
         case SDLK_SPACE:
+            std::unique_lock<std::mutex> p_lock(p_mtx);
             TogglePause(paused);
+            p_lock.unlock();
       }
     }
   }

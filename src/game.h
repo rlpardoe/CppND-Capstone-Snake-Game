@@ -30,8 +30,19 @@ class Game {
 
   int score{0};
   bool paused = true;
+  std::mutex pause_mtx;
   void PlaceFood();
   void Update();
+
+  void BonusFoodTimer();
+  //void PlaceBonusFood();
+
+  //bool already_appeared;
+  bool is_bonus_food_active;
+  //SDL_Point bonus_add_food;
+  std::thread bonusFoodThread;
+  std::mutex mutex;
+  std::condition_variable conditon_var;
 };
 
 #endif

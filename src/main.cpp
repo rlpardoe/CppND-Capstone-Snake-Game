@@ -3,6 +3,8 @@
 #include "game.h"
 #include "renderer.h"
 #include "utils.h"
+#include "barriers.h"
+#include <memory>
 
 int main() {
   constexpr std::size_t kFramesPerSecond{60};
@@ -16,6 +18,8 @@ auto [kScreenDim, kGridDim] = parseWindowInfo("../src/WindowDims.txt");
 //const size_t kGridWidth = kPixelSize;
 //const size_t kGridHeight = kGridWidth; 
   //Renderer renderer(kScreenWidth, kScreenHeight, kGridWidth, kGridHeight);
+  //<BarrierManager> barrierManager(15, kGridDim, kGridDim);
+  auto barrierManagerP = std::make_shared<BarrierManager>(15, kGridDim, kGridDim);
   Renderer renderer(kScreenDim, kGridDim);
   Controller controller;
   Game game(kGridDim, kGridDim);

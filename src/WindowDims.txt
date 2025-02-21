@@ -1,2 +1,2 @@
-ScreenDim: 720 #number of pixels to a side
-GridDim: 45 #number of cells to a side
+ScreenDim: 720 #number of pixels to a side, ScreenDim must be integer multiple of GridDim
+GridDim: 40 #number of cells to a side

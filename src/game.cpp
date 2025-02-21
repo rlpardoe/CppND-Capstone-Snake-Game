@@ -33,12 +33,11 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     std::future<bool> ftr;
     ftr = prms.get_future();
 
+    //Start thread to check if snake has hit a barrier while rendering and waiting for frame time
     auto f = [](std::shared_ptr<BarrierManager> barMptr, int x, int y, std::promise<bool> prms){
       prms.set_value(barMptr->CheckCollisions(x,y,false));
     };
     std::thread t1(f, barrierManager, static_cast<int>(snake.head_x), static_cast<int>(snake.head_y), std::move(prms));
-
-        //std::thread t1(&BarrierManager::CheckCollisions, barrierManager, static_cast<int>(snake.head_x), std::move(prms), static_cast<int>(snake.head_y), false);
 
     renderer.Render(snake, food);
 
@@ -62,6 +61,8 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     if (frame_duration < target_frame_duration) {
       SDL_Delay(target_frame_duration - frame_duration);
     }
+
+    //get info back from thread on wether snake hit barrier and is dead before next frame
     bool collision = ftr.get();
     snake.alive = snake.alive && !collision;
     t1.join();
@@ -75,8 +76,8 @@ void Game::PlaceFood() {
     x = random_w(engine);
     y = random_h(engine);
     // Check that the location is not occupied by a snake item before placing
-    // food.
-    if (!snake.SnakeCell(x, y)) {
+    // food. Also Check that it is not occupied by a barrier
+    if (!snake.SnakeCell(x, y) && !barrierManager->CheckCollisions(x, y, false)) {
       food.x = x;
       food.y = y;
       return;
@@ -103,7 +104,7 @@ void Game::Update() {
     PlaceFood();
     // Grow snake and increase speed.
     snake.GrowBody();
-    snake.speed += 0.02;
+    snake.speed += 0.01;
   }
 }
 

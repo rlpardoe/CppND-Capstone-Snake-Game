@@ -9,23 +9,20 @@
 class Barrier{
 public:
     Barrier(int posx, int posy);
-    bool CheckCollision(int x, int y);
-    bool CheckX(int x);
-    bool CheckY(int y);
-    SDL_Point getSDL();
+    bool CheckCollision(int x, int y) const;
+    SDL_Point getSDL() const;
 private:
     const int _posx;
     const int _posy;
 };
 
-class BarrierManager /*: public std::enable_shared_from_this<BarrierManager>*/{
+class BarrierManager{
 public:
     BarrierManager(const unsigned int numBarriers, std::size_t grid_width, std::size_t grid_height);
     ~BarrierManager();
-    int number(){ return _numBarriers;}
+    int number() const { return _numBarriers;}
     bool CheckCollisions(int x, int y, bool parallel) const;
-    std::vector<SDL_Point> getGraphicsPoints();
-    //std::mutex mtx;
+    std::vector<SDL_Point> getGraphicsPoints() const;
 private:
     std::vector<Barrier*> barrier_ps;
     const unsigned int _numBarriers; 

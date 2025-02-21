@@ -19,7 +19,7 @@ auto [kScreenDim, kGridDim] = parseWindowInfo("../src/WindowDims.txt");
 //const size_t kGridHeight = kGridWidth; 
   //Renderer renderer(kScreenWidth, kScreenHeight, kGridWidth, kGridHeight);
   //<BarrierManager> barrierManager(15, kGridDim, kGridDim);
-  auto barrierManagerP = std::make_shared<BarrierManager>(20, kGridDim, kGridDim);
+  auto barrierManagerP = std::make_shared<BarrierManager>(45, kGridDim, kGridDim);
   Renderer renderer(kScreenDim, kGridDim, barrierManagerP);
   Controller controller;
   Game game(kGridDim, kGridDim, barrierManagerP);

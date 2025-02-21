@@ -6,17 +6,11 @@
 
 Barrier::Barrier(int posx, int posy): _posx(posx), _posy(posy){}
 
-bool Barrier::CheckCollision(int x, int y){
-    //std::cout << "(" << x << "," << y << ") checking collision at" <<  "(" << _posx << "," << _posy << ")" <<std::endl;
+bool Barrier::CheckCollision(int x, int y) const{
     return ((x == _posx ) && (y == _posy));
 }
-bool Barrier::CheckX(int x){
-    return (x==_posx);
-}
-bool Barrier::CheckY(int y){
-    return (y==_posy);
-}
-SDL_Point Barrier::getSDL(){
+
+SDL_Point Barrier::getSDL() const{
     SDL_Point point{_posx, _posy};
     return point;
 }
@@ -30,6 +24,8 @@ BarrierManager::BarrierManager(const unsigned int numBarriers, std::size_t grid_
     while (numPlaced < numBarriers){
         x = random_w(engine);
         y = random_h(engine);
+        // Dont place multipl barriers at the same location;
+        if (CheckCollisions(x,y, false)) continue;
         std::cout << "Placing Barrier #" << numPlaced+1 <<std::endl;
         barrier_ps.push_back(new Barrier(x,y));
         numPlaced++;
@@ -37,72 +33,13 @@ BarrierManager::BarrierManager(const unsigned int numBarriers, std::size_t grid_
 }
 
 bool BarrierManager::CheckCollisions(int x, int y, bool parallel) const{
-    //std::cout << "Checking Collisions!" << std::endl;
-    //std::lock_guard lock(mtx);
     bool collision = false;
-    if (!parallel){
-        for (auto barPtr: barrier_ps){
-            collision = barPtr->CheckCollision(x,y);
-            if (collision) {
-                //std::cout << "\n(" << x << "," << y << ") : Collision!!!\n";
-                //prms.set_value(true);
-                
-                return true;
-            }
-            //else std::cout << "\n(" << x << "," << y << ")";
-        }
-        return false;
+    for (auto barPtr: barrier_ps){
+        collision = barPtr->CheckCollision(x,y);
+        if (collision) return true;
     }
-    /*
-    else{
-        auto vecPtr = &barrier_ps;
-        auto num = _numBarriers;
-        std::promise<int> prms_x;
-        std::future<int> ftr_x;
-        ftr_x = prms_x.get_future();
-        std::promise<int> prms_y;
-        std::future<int> ftr_y;
-        ftr_y = prms_y.get_future();
-        
-        auto findXOverlap = [vecPtr, num](std::promise<int> prms, int x){
-        //std::thread([vecPtr, num, x](){
-            int i{0};
-            for (; i<num; ++i){
-                if (vecPtr->at(i)->CheckX(x)){
-                    prms.set_value(i);
-                    return;
-                }
-            }
-            prms.set_value(-1);
-            return;
-        };
-
-        auto findYOverlap = [vecPtr, num](std::promise<int> prms, int y){
-            //std::thread([vecPtr, num, x](){
-                int i{0};
-                for (; i<num; ++i){
-                    if (vecPtr->at(i)->CheckY(y)){
-                        prms.set_value(i);
-                        return;
-                    }
-                }
-                prms.set_value(-1);
-                return;
-            };
-
-        std::thread tx(findXOverlap, std::move(prms_x), x);
-        std::thread ty(findYOverlap, std::move(prms_y), y);
-
-        int xCollideIndex = ftr_x.get();
-        int yCollideIndex = ftr_y.get();
-
-        if (xCollideIndex == yCollideIndex) return true;
-        tx.join();
-        ty.join();
-        return false;
-    }
-    */
-   return false;
+    return false;
+    
 }
 
 BarrierManager::~BarrierManager(){
@@ -111,7 +48,7 @@ BarrierManager::~BarrierManager(){
     }
 }
 
-std::vector<SDL_Point> BarrierManager::getGraphicsPoints(){
+std::vector<SDL_Point> BarrierManager::getGraphicsPoints() const{
     std::vector<SDL_Point> points;
     points.reserve(_numBarriers);
     for (auto p : barrier_ps){

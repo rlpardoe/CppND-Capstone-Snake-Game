@@ -3,6 +3,8 @@
 #include <vector>
 #include <random>
 #include "SDL.h"
+#include <future>
+#include <mutex>
 
 class Barrier{
 public:
@@ -16,13 +18,14 @@ private:
     const int _posy;
 };
 
-class BarrierManager{
+class BarrierManager /*: public std::enable_shared_from_this<BarrierManager>*/{
 public:
     BarrierManager(const unsigned int numBarriers, std::size_t grid_width, std::size_t grid_height);
     ~BarrierManager();
     int number(){ return _numBarriers;}
-    bool CheckCollisions(int x, int y, bool parallel);
+    bool CheckCollisions(int x, int y, bool parallel) const;
     std::vector<SDL_Point> getGraphicsPoints();
+    //std::mutex mtx;
 private:
     std::vector<Barrier*> barrier_ps;
     const unsigned int _numBarriers; 

@@ -1,6 +1,5 @@
 #include "barriers.h"
 #include <thread>
-#include <future>
 #include <utility>
 #include <iostream>
 #include <algorithm>
@@ -8,6 +7,7 @@
 Barrier::Barrier(int posx, int posy): _posx(posx), _posy(posy){}
 
 bool Barrier::CheckCollision(int x, int y){
+    //std::cout << "(" << x << "," << y << ") checking collision at" <<  "(" << _posx << "," << _posy << ")" <<std::endl;
     return ((x == _posx ) && (y == _posy));
 }
 bool Barrier::CheckX(int x){
@@ -30,21 +30,30 @@ BarrierManager::BarrierManager(const unsigned int numBarriers, std::size_t grid_
     while (numPlaced < numBarriers){
         x = random_w(engine);
         y = random_h(engine);
-        // check if same as food, if it 'continue and regenerate'
         std::cout << "Placing Barrier #" << numPlaced+1 <<std::endl;
         barrier_ps.push_back(new Barrier(x,y));
         numPlaced++;
     }  
 }
 
-bool BarrierManager::CheckCollisions(int x, int y, bool parallel){
+bool BarrierManager::CheckCollisions(int x, int y, bool parallel) const{
+    //std::cout << "Checking Collisions!" << std::endl;
+    //std::lock_guard lock(mtx);
     bool collision = false;
     if (!parallel){
         for (auto barPtr: barrier_ps){
-            if (collision = barPtr->CheckCollision(x,y)) break;
+            collision = barPtr->CheckCollision(x,y);
+            if (collision) {
+                //std::cout << "\n(" << x << "," << y << ") : Collision!!!\n";
+                //prms.set_value(true);
+                
+                return true;
+            }
+            //else std::cout << "\n(" << x << "," << y << ")";
         }
-        return collision;
+        return false;
     }
+    /*
     else{
         auto vecPtr = &barrier_ps;
         auto num = _numBarriers;
@@ -55,8 +64,8 @@ bool BarrierManager::CheckCollisions(int x, int y, bool parallel){
         std::future<int> ftr_y;
         ftr_y = prms_y.get_future();
         
-        auto findOverlap = [vecPtr, num](std::promise<int> prms, int x){
-        /*std::thread([vecPtr, num, x](){*/
+        auto findXOverlap = [vecPtr, num](std::promise<int> prms, int x){
+        //std::thread([vecPtr, num, x](){
             int i{0};
             for (; i<num; ++i){
                 if (vecPtr->at(i)->CheckX(x)){
@@ -67,8 +76,22 @@ bool BarrierManager::CheckCollisions(int x, int y, bool parallel){
             prms.set_value(-1);
             return;
         };
-        std::thread tx(findOverlap, std::move(prms_x), x);
-        std::thread ty(findOverlap, std::move(prms_y), y);
+
+        auto findYOverlap = [vecPtr, num](std::promise<int> prms, int y){
+            //std::thread([vecPtr, num, x](){
+                int i{0};
+                for (; i<num; ++i){
+                    if (vecPtr->at(i)->CheckY(y)){
+                        prms.set_value(i);
+                        return;
+                    }
+                }
+                prms.set_value(-1);
+                return;
+            };
+
+        std::thread tx(findXOverlap, std::move(prms_x), x);
+        std::thread ty(findYOverlap, std::move(prms_y), y);
 
         int xCollideIndex = ftr_x.get();
         int yCollideIndex = ftr_y.get();
@@ -78,6 +101,8 @@ bool BarrierManager::CheckCollisions(int x, int y, bool parallel){
         ty.join();
         return false;
     }
+    */
+   return false;
 }
 
 BarrierManager::~BarrierManager(){

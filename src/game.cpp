@@ -1,9 +1,12 @@
 #include "game.h"
 #include <iostream>
 #include "SDL.h"
+#include <thread>
+#include <future>
 
-Game::Game(std::size_t grid_width, std::size_t grid_height)
+Game::Game(std::size_t grid_width, std::size_t grid_height, std::shared_ptr<BarrierManager> barrierManager)
     : snake(grid_width, grid_height),
+      barrierManager(barrierManager),
       engine(dev()),
       random_w(0, static_cast<int>(grid_width - 1)),
       random_h(0, static_cast<int>(grid_height - 1)) {
@@ -25,6 +28,18 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     // Input, Update, Render - the main game loop.
     controller.HandleInput(running, paused, snake);
     Update();
+
+    std::promise<bool> prms;
+    std::future<bool> ftr;
+    ftr = prms.get_future();
+
+    auto f = [](std::shared_ptr<BarrierManager> barMptr, int x, int y, std::promise<bool> prms){
+      prms.set_value(barMptr->CheckCollisions(x,y,false));
+    };
+    std::thread t1(f, barrierManager, static_cast<int>(snake.head_x), static_cast<int>(snake.head_y), std::move(prms));
+
+        //std::thread t1(&BarrierManager::CheckCollisions, barrierManager, static_cast<int>(snake.head_x), std::move(prms), static_cast<int>(snake.head_y), false);
+
     renderer.Render(snake, food);
 
     frame_end = SDL_GetTicks();
@@ -47,7 +62,11 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     if (frame_duration < target_frame_duration) {
       SDL_Delay(target_frame_duration - frame_duration);
     }
+    bool collision = ftr.get();
+    snake.alive = snake.alive && !collision;
+    t1.join();
   }
+  
 }
 
 void Game::PlaceFood() {
@@ -66,12 +85,17 @@ void Game::PlaceFood() {
 }
 
 void Game::Update() {
+
   if (!snake.alive || paused) return;
 
   snake.Update();
-
   int new_x = static_cast<int>(snake.head_x);
   int new_y = static_cast<int>(snake.head_y);
+ 
+
+
+  //bool hitBarrier = barrierManager->CheckCollisions(new_x, new_y, false);
+  //snake.alive = snake.alive && !hitBarrier;
 
   // Check if there's food over here
   if (food.x == new_x && food.y == new_y) {

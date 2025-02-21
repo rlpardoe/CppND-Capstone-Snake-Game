@@ -21,7 +21,7 @@ public:
     BarrierManager(const unsigned int numBarriers, std::size_t grid_width, std::size_t grid_height);
     ~BarrierManager();
     int number() const { return _numBarriers;}
-    bool CheckCollisions(int x, int y, bool parallel) const;
+    bool CheckCollisions(int x, int y) const;
     std::vector<SDL_Point> getGraphicsPoints() const;
 private:
     std::vector<Barrier*> barrier_ps;

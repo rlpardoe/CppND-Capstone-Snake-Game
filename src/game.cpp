@@ -35,7 +35,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 
     //Start thread to check if snake has hit a barrier while rendering and waiting for frame time
     auto f = [](std::shared_ptr<BarrierManager> barMptr, int x, int y, std::promise<bool> prms){
-      prms.set_value(barMptr->CheckCollisions(x,y,false));
+      prms.set_value(barMptr->CheckCollisions(x,y));
     };
     std::thread t1(f, barrierManager, static_cast<int>(snake.head_x), static_cast<int>(snake.head_y), std::move(prms));
 
@@ -77,7 +77,7 @@ void Game::PlaceFood() {
     y = random_h(engine);
     // Check that the location is not occupied by a snake item before placing
     // food. Also Check that it is not occupied by a barrier
-    if (!snake.SnakeCell(x, y) && !barrierManager->CheckCollisions(x, y, false)) {
+    if (!snake.SnakeCell(x, y) && !barrierManager->CheckCollisions(x, y)) {
       food.x = x;
       food.y = y;
       return;
@@ -93,11 +93,6 @@ void Game::Update() {
   int new_x = static_cast<int>(snake.head_x);
   int new_y = static_cast<int>(snake.head_y);
  
-
-
-  //bool hitBarrier = barrierManager->CheckCollisions(new_x, new_y, false);
-  //snake.alive = snake.alive && !hitBarrier;
-
   // Check if there's food over here
   if (food.x == new_x && food.y == new_y) {
     score++;

@@ -25,14 +25,14 @@ BarrierManager::BarrierManager(const unsigned int numBarriers, std::size_t grid_
         x = random_w(engine);
         y = random_h(engine);
         // Dont place multipl barriers at the same location;
-        if (CheckCollisions(x,y, false)) continue;
+        if (CheckCollisions(x,y)) continue;
         std::cout << "Placing Barrier #" << numPlaced+1 <<std::endl;
         barrier_ps.push_back(new Barrier(x,y));
         numPlaced++;
     }  
 }
 
-bool BarrierManager::CheckCollisions(int x, int y, bool parallel) const{
+bool BarrierManager::CheckCollisions(int x, int y) const{
     bool collision = false;
     for (auto barPtr: barrier_ps){
         collision = barPtr->CheckCollision(x,y);

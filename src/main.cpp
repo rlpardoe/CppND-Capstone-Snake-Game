@@ -14,7 +14,7 @@ int main() {
   constexpr std::size_t kGridWidth{32};
   constexpr std::size_t kGridHeight{32};*/
 
-  auto [kScreenDim, kGridDim, kNumBarr] = parseWindowInfo("../runtimeConfig.txt");
+  auto [kScreenDim, kGridDim, kNumBarr] = parseSetupInfo("../runtimeConfig.txt");
   auto barrierManagerP = std::make_shared<BarrierManager>(kNumBarr, kGridDim, kGridDim);
   Renderer renderer(kScreenDim, kGridDim, barrierManagerP);
   Controller controller;

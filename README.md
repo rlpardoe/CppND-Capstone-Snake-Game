@@ -27,8 +27,8 @@ This project is based on the starter repo for the Capstone project in the [Udaci
 4. Run it: `./SnakeGame`.
 
 ## Feautures Added to Starter Code
-1. Pause Button - spacebar can be pressed to pause the game at any time
-2. Randomly placed barriers distributed around the map
+1. Randomly placed barriers distributed around the map, hitting a barrier kills the snake and ends the game
+2. Pause Button - spacebar can be pressed to pause the game at any time, additionally, the game starts paused so that you can asses barrier locations before starting
 3. Window size, grid size and number of barriers can be changed without recompiling by editing runtimeConfig.txt
 
 

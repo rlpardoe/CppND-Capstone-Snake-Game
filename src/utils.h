@@ -1,10 +1,10 @@
 #include <string>
 
-struct windowInfo
+struct SetupInfo
 {
     unsigned int screenDim;
     unsigned int gridDim;
     unsigned int numBarr;
 };
 
-windowInfo parseWindowInfo(std::string filepath);
+SetupInfo parseSetupInfo(std::string filepath);

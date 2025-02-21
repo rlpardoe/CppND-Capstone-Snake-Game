@@ -5,7 +5,7 @@
 #include <fstream>
 #include <sstream>
 
-windowInfo parseWindowInfo(std::string filepath){
+SetupInfo parseSetupInfo(std::string filepath){
     std::ifstream inputFile(filepath);
     if (!inputFile.is_open()){
         throw std::runtime_error("Failed to open file at provided path");
@@ -13,7 +13,7 @@ windowInfo parseWindowInfo(std::string filepath){
     std::string line;
     std::string key;
     unsigned int value;
-    windowInfo ret;
+    SetupInfo ret;
     while (std::getline(inputFile, line)){
         std::istringstream stringStream(line);
         stringStream >> key >> value;

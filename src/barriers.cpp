@@ -26,7 +26,6 @@ BarrierManager::BarrierManager(const unsigned int numBarriers, std::size_t grid_
         y = random_h(engine);
         // Dont place multipl barriers at the same location or in the starting square;
         if (CheckCollisions(x,y) || (x == grid_width/2 && y == grid_width/2)) continue;
-        std::cout << "Placing Barrier #" << numPlaced+1 <<std::endl;
         barrier_ps.push_back(new Barrier(x,y));
         numPlaced++;
     }  

@@ -1,3 +1,5 @@
+#ifndef UTILS_H
+#define UTILS_H
 #include "utils.h"
 #include <stdexcept>
 #include <fstream>
@@ -22,3 +24,5 @@ windowInfo parseWindowInfo(std::string filepath){
 
     return ret;
 }
+
+#endif

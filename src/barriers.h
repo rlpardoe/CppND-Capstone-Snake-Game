@@ -1,5 +1,8 @@
+#ifndef BARRIERS_H
+#define BARRIERS_H
 #include <vector>
 #include <random>
+#include "SDL.h"
 
 class Barrier{
 public:
@@ -7,22 +10,26 @@ public:
     bool CheckCollision(int x, int y);
     bool CheckX(int x);
     bool CheckY(int y);
+    SDL_Point getSDL();
 private:
     const int _posx;
     const int _posy;
 };
 
 class BarrierManager{
-    public:
-    BarrierManager(const int numBarriers, std::size_t grid_width, std::size_t grid_height);
+public:
+    BarrierManager(const unsigned int numBarriers, std::size_t grid_width, std::size_t grid_height);
     ~BarrierManager();
-    bool CheckCollisions(int x, int y);
+    int number(){ return _numBarriers;}
     bool CheckCollisions(int x, int y, bool parallel);
-    private:
-        std::vector<Barrier*> barrier_ps;
-        unsigned int _numBarriers; 
-        std::random_device dev;
-        std::mt19937 engine;
-        std::uniform_int_distribution<int> random_w;
-        std::uniform_int_distribution<int> random_h;
+    std::vector<SDL_Point> getGraphicsPoints();
+private:
+    std::vector<Barrier*> barrier_ps;
+    const unsigned int _numBarriers; 
+    std::random_device dev;
+    std::mt19937 engine;
+    std::uniform_int_distribution<int> random_w;
+    std::uniform_int_distribution<int> random_h;
 };
+
+#endif

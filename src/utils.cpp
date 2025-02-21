@@ -20,6 +20,7 @@ windowInfo parseWindowInfo(std::string filepath){
         
         if (key.compare("ScreenDim:") == 0) ret.screenDim = value;
         if (key.compare("GridDim:") == 0) ret.gridDim = value;
+        if (key.compare("NumBarriers:") == 0) ret.numBarr = value;
     }
 
     return ret;

@@ -26,10 +26,11 @@ This project is based on the starter repo for the Capstone project in the [Udaci
 3. Compile: `cmake .. && make`
 4. Run it: `./SnakeGame`.
 
-## Feautures Added
+## Feautures Added to Starter Code
 1. Pause Button - spacebar can be pressed to pause the game at any time
-2. Configuratble window and grid size: edit WindowDims.txt in souce to edit the window and grid size. The window size should be an integer multipl of the screen size
-3. 
+2. Randomly placed barriers distributed around the map
+3. Window size, grid size and number of barriers can be changed without recompiling by editing runtimeConfig.txt
+
 
 ## Ruberic Points
 

@@ -85,21 +85,6 @@ void Game::PlaceFood() {
   }
 }
 
-/*void Game::PlaceBonusFood() {
-  int x, y;
-  while (true) {
-    x = random_w(engine);
-    y = random_h(engine);
-    // Check that the location is not occupied by a snake item before placing
-    // food. Also Check that it is not occupied by a barrier
-    if (!snake.SnakeCell(x, y) && !barrierManager->CheckCollisions(x, y)) {
-      bonus_add_food.x = x;
-      bonus_add_food.y = y;
-      return;
-    }
-  }
-}*/
-
 void Game::Update() {
   std::unique_lock<std::mutex> plock(pause_mtx);
   if (!snake.alive || paused) return;
@@ -127,12 +112,12 @@ void Game::Update() {
       //no speed increase !!
 
       //Close old thread
-      //lock.lock(); // -starts locked
       is_bonus_food_active = false;
       conditon_var.notify_one(); 
       lock.unlock();
       //sleep to allow thread to check condition and close
       std::this_thread::sleep_for(std::chrono::milliseconds(2));
+
       //Start new thread and detach
       lock.lock();
       is_bonus_food_active = true;
@@ -147,17 +132,6 @@ void Game::Update() {
     snake.GrowBody();
     
   }
-
-  /*if (!is_bonus_food_active)
-   // { // Check if bonus food is already active
-      PlaceBonusFood();
-      is_bonus_food_active = true;
-      bonusFoodThread = std::thread(&Game::BonusFoodTimer, this);
-      bonusFoodThread.detach();
-      //already_appeared = true;
-    }*/
-
-
 }
 
 int Game::GetScore() const { return score; }
@@ -179,25 +153,17 @@ void Game::BonusFoodTimer()
     if (elapsed_Seconds >= bonusMilliSeconds)
     {
       // Bonus food time is up
-      lock.lock(); // will unlock at break - added by me
+      lock.lock(); // will unlock at break
       is_bonus_food_active = false;
-      //bonus_add_food.x = 1;
-      //bonus_add_food.y = 1;
       break;
     }
     lock.lock();
     // Wait for a short interval or until the condition_variable is notified
-    //conditon_var.wait_for(lock, std::chrono::milliseconds(800));
-    conditon_var.wait_for(lock, std::chrono::milliseconds(1000));
-    std::cout << "bonus is currently : " << is_bonus_food_active << std::endl;
+    conditon_var.wait_for(lock, std::chrono::milliseconds(500));
+    //std::cout << "bonus is currently : " << is_bonus_food_active << std::endl;
+
     // if time is paused increase real time where bonus food is active equally
     std::lock_guard<std::mutex> plock(pause_mtx); // falls out of scoper at end of loop
     if (paused) bonusMilliSeconds += std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - current_Time).count();
   }
 }
-
-//eatFood
-// Set is_bonus_food_active to false
-//notify condition
-// timer breaks out of loop and returns
-// something with mutex?

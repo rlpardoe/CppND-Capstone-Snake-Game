@@ -31,6 +31,7 @@ This project is based on the starter repo for the Capstone project in the [Udaci
 1. Purple Barriers are randomly distributed around the map, hitting a barrier kills the snake and ends the game
 2. Pause Button - spacebar can be pressed to pause the game at any time, additionally, the game starts paused so that you can asses barrier locations before starting
 3. Window size, number of grid squares to a side, and number of barriers can be changed without recompiling by editing runtimeConfig.txt
+4. 'Ripe' Food - for the first 15 seconds after a food tile appears it will appear green rather than yellow, if you consume the food while it is still green, your speed will remain the same rather than increase, this is a buff as higher speed makes it harder to avoid barriers while going for food.
 
 ## Ruberic Points
 
@@ -51,9 +52,9 @@ This project is based on the starter repo for the Capstone project in the [Udaci
 4. The project uses smart pointers - BarrierManager is itself managed using a shared_pointer which is shared with the Renderer and Game objects (see main.cpp line 18,19,21)
 
 ### Concurrency
-1. The Project uses multithreading - A thread is started up to detect collisions with barriers for the next frame while the main thread renders and delays to achieve the correct frame duration in Game::Run (see game.cpp lines 32-68)
-2. A promise and future is used in the project - The thread used in Game::Run to detect collisions with barriers passes a bool for whetehr a collision was detected to the main thread using a promise and future (see game.cpp lines 32-40, 66) 
-
+1. The Project uses multithreading - A timer is started up in a seperate thread (and detached) to determine wheen food will no longer be ripe see Game::BonusFoodTimer() (game.cpp lines 140-169) the thread is launched and detached in Game::Update() (see game.cpp lines 100-127)
+2. A Mutex or a lock is used in the project - A mutex (pause_mtx) is used to protect the member varaible Game::paused as both the main thread and the timer thread need to read it so the timer does not run out while the game is paused (see game.cpp line 89-91, 166-167; controller.cpp line 42-44,  ). Additionally a Mutex is used to protect Game::is_bonus_food_active see Game::BonusFoodTimer() (game.cpp lines 140-167) as well as Game::Update(game.cpp lines 101-124)
+3. A condition variable is used in the project - A condition variable (game::condition_var) is used in coordination with bool Game::is_bonus_food_active to notify the Ripeness timer that it can exit early if the food was eaten while it was ripe, see Game::update() (game.cpp lines 111-126) and Game::Bonus_Food_Timer (game.cpp lines 146, 162)
 
 ## CC Attribution-ShareAlike 4.0 International
 
